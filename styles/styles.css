@@ -1,0 +1,76 @@
+/*@font-face { 
+    font-family: 'Score Board';
+    src: url("scoreboard-webfont.woff");
+    src: url("scoreboard-webfont.woff2"); 
+}*/
+
+body {
+    font-family: 'Overpass', sans-serif;
+    font-size: 1em;
+    margin: 0;
+}
+
+header {
+    font-size: 4em;
+    text-align: center;
+    margin: 25px;
+}
+
+#container {
+   /*grid-template-areas:
+  "number number number operator"
+  "number number number operator"
+  "number number number operator"
+  ". number . operator"
+  "backspace clear equals equals";*/
+    margin: 30px 0;
+}
+
+#displayDiv {
+    font-family: 'Abel', sans-serif;
+    height: 80px;
+    background-color: #fcfdfd;
+    font-size: 3em;
+    width: 400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: end;
+    align-items: flex-end;
+    color: #4a4849;
+    border: #aeb7d5 1px solid;
+    box-sizing: border-box;
+}
+
+#keysDiv {
+    width: 400px;
+    height: 400px;
+    margin: 0 auto;
+    background-color: #FCFDFD;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    font-size: 2em;
+    color: #A5A6A6;
+}
+
+.operatorBtn {
+    color: #9c75f4;
+    background-color: #FCFDFD;
+    font-family: 'Overpass', sans-serif;
+    font-weight: 700;
+}
+
+#keysDiv div {
+    border: #aeb7d5 1px solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#kEquals {
+    grid-area: 5/3/6/5;
+    background-color: #94926d;
+    color: #FCFDFD;
+    font-family: 'Overpass', sans-serif;
+    font-weight: 700;
+}
