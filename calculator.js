@@ -13,3 +13,8 @@ function multiply (array) {
 function divide (dividend, divisor) {
     return (divisor != 0)? dividend/divisor: "invalid operation";
 }
+
+function operate(operand1, operator, operand2) {
+    return (operator == "add")? add(operand1, operand2): (operator == "subtract")? subtract(operand1, operand2):
+    (operator == "multiply")? multiply([operand1, operand2]): divide (operand1, operand2);
+}
