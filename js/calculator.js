@@ -98,7 +98,6 @@ const displayFunctions = {
             return;
         }
         else { 
-
             this["rawDisplayContent"] = displayDiv.textContent.replace(/,/g, "") + `${document.querySelector(`#${key}`).textContent}`;
             displayDiv.textContent = this.rawDisplayContent.replace(/(?<!(?<=\.)(\d)*)\d(?=(\d{3})+(?!\d))/g, "$&,");
             delete this.rawDisplayContent;
@@ -122,7 +121,7 @@ const mathOperations = {
                 (operator == "kMultiply")? this.multiply([operand1, operand2]): 
                 this.divide(operand1, operand2);
         }
-        return  (result.toString().length > 13 && typeof(result) === "number" || result.toString().indexOf("e+") >= 0 || result.toString().indexOf("e-") >= 0)? result.toExponential(9):
+        return  (result.toString().length > 14 && typeof(result) === "number" || result.toString().indexOf("e+") >= 0 || result.toString().indexOf("e-") >= 0)? result.toExponential(9):
                 result.toString().replace(/(?<!(?<=\.)(\d)*)\d(?=(\d{3})+(?!\d))/g, "$&,");
     },
     add: function(addend, addend2) {
