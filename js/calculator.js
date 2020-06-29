@@ -23,6 +23,9 @@ function redirectClick(button) {
         case button.target.id == "kEquals":
             onClickFunctions.equals();
             break;
+        case button.target.id == "kDot":
+            onClickFunctions.number(button.target);
+            break;
     }
 }
 
@@ -39,7 +42,7 @@ const onClickFunctions = {
                 if ("storedOperation" in this && "currentOperand" in displayFunctions && !("equalsResult" in this)) {
                     displayDiv.textContent = mathOperations.operate(this.storedOperation[0], this.storedOperation[1], displayFunctions.currentOperand);
                     this.storedOperation = [(displayDiv.textContent === "invalid operation" || displayDiv.textContent === "ERROR")? 
-                    displayDiv.textContent: displayDiv.textContent*1, button.id];
+                    displayDiv.textContent: displayDiv.textContent.replace(/,/g, "")*1, button.id];
                     delete displayFunctions.currentOperand;
                 }
                 else if ("currentOperand" in displayFunctions && !("equalsResult" in this)) {
@@ -68,13 +71,17 @@ const onClickFunctions = {
             console.log(mathOperations.operate(this.storedOperation[0], 
                 this.storedOperation[1], ("currentOperand" in displayFunctions)? displayFunctions.currentOperand: this.storedOperation[0]));
             this["equalsResult"] = (displayDiv.textContent === "invalid operation" || displayDiv.textContent === "ERROR")? 
-                displayDiv.textContent: displayDiv.textContent*1;
+                displayDiv.textContent: displayDiv.textContent.replace(/,/g, "")*1;
         }
         else if ("equalsResult" in this) {
             displayDiv.textContent = mathOperations.operate(this.equalsResult, 
                 this.storedOperation[1], ("currentOperand" in displayFunctions)? displayFunctions.currentOperand: this.storedOperation[0]);
-            if (displayDiv.textContent === "invalid operation" || displayDiv.textContent === "ERROR") this.equalsResult = displayDiv.textContent; 
-            else this.equalsResult = displayDiv.textContent*1;
+            if (displayDiv.textContent === "invalid operation" || displayDiv.textContent === "ERROR") {
+                this.equalsResult = displayDiv.textContent;
+            }
+            else {
+                this.equalsResult = displayDiv.textContent.replace(/,/g, "")*1;
+            }
         }
         else {
             return;
@@ -85,27 +92,38 @@ const onClickFunctions = {
 const displayFunctions = {
     display: function(key) {
         if (displayDiv.textContent === "0" || !("currentOperand" in displayFunctions)) { 
-            displayDiv.textContent = `${document.querySelector(`#${key}`).textContent}`;
-         }
-         else { 
-            displayDiv.textContent += `${document.querySelector(`#${key}`).textContent}`;
-         }
-        this["currentOperand"] = Number(displayDiv.textContent);
+            displayDiv.textContent = (key == "kDot")? "0.": `${document.querySelector(`#${key}`).textContent}`;
+        }
+        else if (this.currentOperand.toString().length > 13 || key == "kDot" && displayDiv.textContent.indexOf(".") >= 0) {
+            return;
+        }
+        else { 
+
+            this["rawDisplayContent"] = displayDiv.textContent.replace(/,/g, "") + `${document.querySelector(`#${key}`).textContent}`;
+            displayDiv.textContent = this.rawDisplayContent.replace(/(?<!(?<=\.)(\d)*)\d(?=(\d{3})+(?!\d))/g, "$&,");
+            delete this.rawDisplayContent;
+        }
+        this["currentOperand"] = Number(displayDiv.textContent.replace(/,/g, ""));
         console.log(this.currentOperand);
+        console.log(key);
     },
 };
 
 const mathOperations = {
     operate: function(operand1, operator, operand2) {
+        let result;
         if (onClickFunctions.storedOperation[0] === "invalid operation" || onClickFunctions.storedOperation[0] === "ERROR") {
             return "ERROR";
         }
         else {
-            return  (operator == "kAdd")? this.add(operand1, operand2): 
-                    (operator == "kSubtract")? this.subtract(operand1, operand2):
-                    (operator == "kMultiply")? this.multiply([operand1, operand2]): 
-                    this.divide(operand1, operand2);
+            result = 
+                (operator == "kAdd")? this.add(operand1, operand2): 
+                (operator == "kSubtract")? this.subtract(operand1, operand2):
+                (operator == "kMultiply")? this.multiply([operand1, operand2]): 
+                this.divide(operand1, operand2);
         }
+        return  (result.toString().length > 13 && typeof(result) === "number" || result.toString().indexOf("e+") >= 0 || result.toString().indexOf("e-") >= 0)? result.toExponential(9):
+                result.toString().replace(/(?<!(?<=\.)(\d)*)\d(?=(\d{3})+(?!\d))/g, "$&,");
     },
     add: function(addend, addend2) {
         return (addend + addend2);
@@ -142,14 +160,3 @@ const secondaryOperations = {
         else return;
     },
 };
-
-
-
-
-
-
-
-
-
-
-
