@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
         <link href="styles/styles.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Overpass:wght@100&display=swap" rel="stylesheet"> 
-        <link href="https://fonts.googleapis.com/css2?family=Abel&display=swap" rel="stylesheet"> 
+        <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Overpass:wght@700&display=swap" rel="stylesheet"> 
     </head>
 
@@ -14,26 +14,26 @@
         <header>My Calculator</header>
         <div id="container">
             <div id="displayDiv">0</div>
-            <div id="keysDiv">
-                <div id="k7" class="numberbtn">7</div>
-                <div id="k8" class="numberbtn">8</div>
-                <div id="k9" class="numberbtn">9</div>
-                <div id="kDivide" class="operatorBtn">÷</div>
-                <div id="k4" class="numberbtn">4</div>
-                <div id="k5" class="numberbtn">5</div>
-                <div id="k6" class="numberbtn">6</div>
-                <div id="kMultiply" class="operatorBtn">×</div>
-                <div id="k1" class="numberbtn">1</div>
-                <div id="k2" class="numberbtn">2</div>
-                <div id="k3" class="numberbtn">3</div>
-                <div id="kSubtract" class="operatorBtn">−</div>
-                <div id="kDot">.</div>
-                <div id="k0" class="numberbtn">0</div>
-                <div id="k+/-"></div>
-                <div id="kAdd" class="operatorBtn">+</div>    
-                <div id="kBackspace">←</div>
-                <div id="kC">c</div>
-                <div id="kEquals">=</div>
+            <div id="keysDiv" tabindex="0">
+                <div data-key="7" id="k7" class="numberbtn">7</div>
+                <div data-key="8" id="k8" class="numberbtn">8</div>
+                <div data-key="9" id="k9" class="numberbtn">9</div>
+                <div data-key="/" id="kDivide" class="operatorBtn">÷</div>
+                <div data-key="4" id="k4" class="numberbtn">4</div>
+                <div data-key="5" id="k5" class="numberbtn">5</div>
+                <div data-key="6" id="k6" class="numberbtn">6</div>
+                <div data-key="*" id="kMultiply" class="operatorBtn">×</div>
+                <div data-key="1" id="k1" class="numberbtn">1</div>
+                <div data-key="2" id="k2" class="numberbtn">2</div>
+                <div data-key="3" id="k3" class="numberbtn">3</div>
+                <div data-key="-" id="kSubtract" class="operatorBtn">−</div>
+                <div data-key="." id="kDot">.</div>
+                <div data-key="0" id="k0" class="numberbtn">0</div>
+                <div data-key=""  id="k+/-"></div>
+                <div data-key="+" id="kAdd" class="operatorBtn">+</div>    
+                <div data-key="Backspace" id="kBackspace">←</div>
+                <div data-key="c" id="kC">c</div>
+                <div data-key="Enter" id="kEquals">=</div>
             </div>
         </div>
         <script src="js/calculator.js" defer></script>

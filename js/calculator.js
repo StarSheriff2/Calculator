@@ -1,30 +1,72 @@
 const displayDiv = document.querySelector("#displayDiv");
 const displayStyle = displayDiv.style;
 const allButtons = document.querySelectorAll("#keysDiv div");
+const keys = document.querySelector("#keysDiv");
 const buttonsArray = Array.from(allButtons);
+const body = document.querySelector("body");
 
-buttonsArray.forEach(btn => btn.addEventListener("click", redirectClick));
+window.addEventListener("load", _ => keys.focus());
+
+body.addEventListener("mouseleave", _ => keys.blur());
+
+body.addEventListener("mouseenter", _ => keys.focus());
+
+document.addEventListener("click", _ => keys.focus());
+
+addEventListener("keydown", parseInput);
+
+buttonsArray.forEach(btn => {
+    btn.addEventListener("click", parseInput);
+    btn.addEventListener("mousedown", applyShadow);
+    btn.addEventListener("mouseup", restoreClass);
+});
+
+function parseInput(e) {
+    if (e.type === "click") {
+        if (e.target.id == "k+/-") return;
+        this["keyId"] = document.querySelector(`#${e.target.id}`);
+    }
+    else {
+        if (document.activeElement === keys && e.keyCode === 8 || e.key === "/") e.preventDefault();
+        this["keyId"] = document.querySelector(`#keysDiv div[data-key="${e.key}"]`);
+    }
+    if (!this.keyId) return;
+    redirectClick(this.keyId);
+}
+
+function applyShadow(e) {
+    if (e.target.id == "k+/-") return;
+    this["keyId"] = document.querySelector(`#${e.target.id}`);
+    this.keyId.classList.add("buttonClick");
+}
+
+function restoreClass(e) {
+    if (e.target.id == "k+/-") return;
+    this["keyId"] = document.querySelector(`#${e.target.id}`);
+    this.keyId.removeAttribute("class", "buttonClick");
+}
 
 function redirectClick(button) {
     switch(true) {
-        case button.target.className == "numberbtn":
-            onClickFunctions.number(button.target);
+        case (button.className == "numberbtn"):
+            onClickFunctions.number(button);
             break;
-        case button.target.className == "operatorBtn":
-            console.log(button.target.id);
-            onClickFunctions.operator(button.target);
+        case button.className == "operatorBtn":
+            console.log(button.id);
+            onClickFunctions.operator(button);
             break;
-        case button.target.id == "kBackspace":
+        case button.id == "kBackspace":
+            console.log(button.id);
             onClickFunctions.backspace();
             break;
-        case button.target.id == "kC":
+        case button.id == "kC":   
             onClickFunctions.clear();
             break;
-        case button.target.id == "kEquals":
+        case button.id == "kEquals":
             onClickFunctions.equals();
             break;
-        case button.target.id == "kDot":
-            onClickFunctions.number(button.target);
+        case button.id == "kDot":
+            onClickFunctions.number(button);
             break;
     }
 }
