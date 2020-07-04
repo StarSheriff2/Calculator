@@ -13,38 +13,82 @@ body.addEventListener("mouseenter", _ => keys.focus());
 
 document.addEventListener("click", _ => keys.focus());
 
-addEventListener("keydown", parseInput);
-
-buttonsArray.forEach(btn => {
-    btn.addEventListener("click", parseInput);
-    btn.addEventListener("mousedown", applyShadow);
-    btn.addEventListener("mouseup", restoreClass);
-});
-
-function parseInput(e) {
-    if (e.type === "click") {
-        if (e.target.id == "k+/-") return;
-        this["keyId"] = document.querySelector(`#${e.target.id}`);
+const userInput = {
+parseInput: function(e) {
+    if (e.type === "mousedown") {
+        if (e.target.id == "k+/-") return; // this is the +/- that will be implemented later
+        userInput["keyId"] = document.querySelector(`#${e.target.id}`);
     }
     else {
+        /*for (prop in buttonsArray) { 
+            if (buttonsArray[prop].classList.contains("buttonClick") && buttonsArray[prop].attributes[0].value !== keyPress) buttonsArray[prop].classList.remove("buttonClick");      
+            }*/
+        if (e.key === '"') return;
         if (document.activeElement === keys && e.keyCode === 8 || e.key === "/") e.preventDefault();
-        this["keyId"] = document.querySelector(`#keysDiv div[data-key="${e.key}"]`);
+        if (document.querySelector(`#keysDiv div[data-key="${e.key}"]`)) {
+            userInput["keyId"] = document.querySelector(`#keysDiv div[data-key="${e.key}"]`);
+        }
+        else {
+            return;
+        }
     }
-    if (!this.keyId) return;
-    redirectClick(this.keyId);
-}
+    redirectClick(userInput.keyId);
+    userInput.keyId.classList.add("buttonClick");
+    userInput["keyDownKeyCode"] = e.keyCode;
+    console.log("keyDownKeyCode: ", userInput.keyDownKeyCode);
+    console.log("userInput.keyId: ", userInput.keyId.classList);
+},
+/*
+Fix decimal zeros overpassing display box limit.
+fix digits giung beyond border.
+*/
+restoreClass: function(e) {
+    if (e.type === "mouseup") {
+        if (!("keyId" in userInput) || !userInput.keyId ) {
+            delete userInput.keyId;
+            return;
+        }
+        userInput.keyId.classList.remove("buttonClick");
+        delete userInput.keyId;
+        return;
+    } else {
+        if (e.key === '"') {        // this is the +/-
+            delete userInput.keyId; // button that will
+            return;                 // be implemented
+        }                           // later
+        userInput["releasedKey"] = document.querySelector(`#keysDiv div[data-key="${e.key}"]`);
+        if (userInput.releasedKey) {
+            if  (userInput.releasedKey.classList.contains("buttonClick")) {
+                userInput.releasedKey.classList.remove("buttonClick");
+            }
+            else {
+                if (e.key === "7") {
+                    document.querySelector("#keysDiv div[data-key='/']").classList.remove("buttonClick");
+                } else if (e.key === "+") {
+                    document.querySelector("#keysDiv div[data-key='*']").classList.remove("buttonClick");
+                } 
+            }
+        } 
+        if (e.keyCode === userInput.keyDownKeyCode) {
+            userInput.keyId.classList.remove("buttonClick");
+        }
+        delete userInput.releasedKey;
+        delete userInput.keyId;
+        delete userInput.keyDownKeyCode;
+        return;
+    }
+},
+};
 
-function applyShadow(e) {
-    if (e.target.id == "k+/-") return;
-    this["keyId"] = document.querySelector(`#${e.target.id}`);
-    this.keyId.classList.add("buttonClick");
-}
+addEventListener("keydown", userInput.parseInput);
 
-function restoreClass(e) {
-    if (e.target.id == "k+/-") return;
-    this["keyId"] = document.querySelector(`#${e.target.id}`);
-    this.keyId.removeAttribute("class", "buttonClick");
-}
+addEventListener("keyup", userInput.restoreClass);
+
+const keyPress = addEventListener("keypress", e => e.key);
+
+buttonsArray.forEach(btn => btn.addEventListener("mousedown", userInput.parseInput));
+
+window.addEventListener("mouseup", userInput.restoreClass);
 
 function redirectClick(button) {
     switch(true) {
