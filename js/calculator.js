@@ -2,7 +2,7 @@ const displayDiv = document.querySelector("#displayDiv");
 const displayStyle = displayDiv.style;
 const allButtons = document.querySelectorAll("#keysDiv div");
 const keys = document.querySelector("#keysDiv");
-const buttonsArray = Array.from(allButtons);
+const buttonsArray = (allButtons);
 const body = document.querySelector("body");
 
 const userInput = {
@@ -78,11 +78,9 @@ function redirectClick(button) {
             onClickFunctions.number(button);
             break;
         case button.className == "operatorBtn":
-            console.log(button.id);
             onClickFunctions.operator(button);
             break;
         case button.id == "kBackspace":
-            console.log(button.id);
             onClickFunctions.backspace();
             break;
         case button.id == "kC":   
@@ -105,39 +103,49 @@ const onClickFunctions = {
             delete displayFunctions.currentOperand;
         }
         displayFunctions.display(button.id);
+        console.log(onClickFunctions.storedOperation);
     },
     operator: function(button) { 
-                if ("storedOperation" in this && "currentOperand" in displayFunctions && !("equalsResult" in this)) {
-                    displayDiv.textContent = mathOperations.operate(this.storedOperation[0], this.storedOperation[1], displayFunctions.currentOperand);
-                    this.storedOperation = [(displayDiv.textContent === "invalid operation" || displayDiv.textContent === "ERROR")? 
-                    displayDiv.textContent: displayDiv.textContent.replace(/,/g, "")*1, button.id];
-                    delete displayFunctions.currentOperand;
-                }
-                else if ("currentOperand" in displayFunctions && !("equalsResult" in this)) {
-                    this["storedOperation"] = [displayFunctions.currentOperand, button.id];
-                    delete displayFunctions.currentOperand;
-                }
-                else if ("storedOperation" in this) { 
-                    this.storedOperation = [("equalsResult" in this)? this.equalsResult: this.storedOperation[0], button.id];
-                    if ("currentOperand" in displayFunctions) delete displayFunctions.currentOperand;
-                    if ("equalsResult" in this) delete this.equalsResult;
-                }
-                else {
-                    this["storedOperation"] = [0, button.id];
-                }
+        if (!(button.classList.contains("operatorClick"))) {
+            if ("storedOperation" in onClickFunctions) {
+                document.querySelector(`#${this.storedOperation[1]}`).classList.remove("operatorClick");
+            }
+            button.classList.add("operatorClick");
+        }  
+        if ("storedOperation" in this && "currentOperand" in displayFunctions && !("equalsResult" in this)) {
+            displayDiv.textContent = mathOperations.operate(this.storedOperation[0], this.storedOperation[1], displayFunctions.currentOperand);
+            this.storedOperation = [(displayDiv.textContent === "invalid operation" || displayDiv.textContent === "ERROR")? 
+            displayDiv.textContent: displayDiv.textContent.replace(/,/g, "")*1, button.id];
+            delete displayFunctions.currentOperand;
+        }
+        else if ("currentOperand" in displayFunctions && !("equalsResult" in this)) {
+            this["storedOperation"] = [displayFunctions.currentOperand, button.id];
+            delete displayFunctions.currentOperand;
+        }
+        else if ("storedOperation" in this) { 
+            this.storedOperation = [("equalsResult" in this)? this.equalsResult: this.storedOperation[0], button.id];
+            if ("currentOperand" in displayFunctions) delete displayFunctions.currentOperand;
+            if ("equalsResult" in this) delete this.equalsResult;
+        }
+        else {
+            this["storedOperation"] = [0, button.id];
+        }                
     },
     backspace: function() {
         secondaryOperations.backspace();
+        console.log(onClickFunctions.storedOperation);
     },
     clear: function() {
         secondaryOperations.clear();
+        console.log(onClickFunctions.storedOperation);
     },
     equals: function() {
+        if ("storedOperation" in onClickFunctions) {
+            document.querySelector(`#${this.storedOperation[1]}`).classList.remove("operatorClick");
+        };  
         if ("storedOperation" in this && !("equalsResult" in this)) {
             displayDiv.textContent = mathOperations.operate(this.storedOperation[0], 
                 this.storedOperation[1], ("currentOperand" in displayFunctions)? displayFunctions.currentOperand: this.storedOperation[0]);
-            console.log(mathOperations.operate(this.storedOperation[0], 
-                this.storedOperation[1], ("currentOperand" in displayFunctions)? displayFunctions.currentOperand: this.storedOperation[0]));
             this["equalsResult"] = (displayDiv.textContent === "invalid operation" || displayDiv.textContent === "ERROR")? 
                 displayDiv.textContent: displayDiv.textContent.replace(/,/g, "")*1;
         }
@@ -152,8 +160,10 @@ const onClickFunctions = {
             }
         }
         else {
+            console.log(onClickFunctions.storedOperation);
             return;
         }
+        console.log(onClickFunctions.storedOperation);
     },
 };
 
@@ -171,8 +181,9 @@ const displayFunctions = {
             delete this.rawDisplayContent;
         }
         this["currentOperand"] = Number(displayDiv.textContent.replace(/,/g, ""));
-        console.log(this.currentOperand);
-        console.log(key);
+        if ("storedOperation" in onClickFunctions && document.querySelector(`#${onClickFunctions.storedOperation[1]}`)) {
+            document.querySelector(`#${onClickFunctions.storedOperation[1]}`).classList.remove("operatorClick");
+        };  
     },
     addCommas: function(num) {
         if (num.indexOf(".") >= 0) {
@@ -224,8 +235,14 @@ const secondaryOperations = {
         delete displayFunctions.currentOperand;
         delete onClickFunctions.storedOperation;
         delete onClickFunctions.equalsResult;
+        if ("storedOperation" in onClickFunctions) {
+            document.querySelector(`#${this.storedOperation[1]}`).classList.remove("operatorClick");
+        }    
     },
     backspace: function() {
+        if ("storedOperation" in onClickFunctions) {
+            document.querySelector(`#${this.storedOperation[1]}`).classList.remove("operatorClick");
+        }
         if ("currentOperand" in displayFunctions && !("equalsResult" in onClickFunctions)) {
             let modifiedDisplayValue = displayDiv.textContent.replace(/,/g, "");
             modifiedDisplayValue = modifiedDisplayValue.slice(0, modifiedDisplayValue.length - 1);
