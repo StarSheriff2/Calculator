@@ -5,86 +5,68 @@ const keys = document.querySelector("#keysDiv");
 const buttonsArray = Array.from(allButtons);
 const body = document.querySelector("body");
 
-window.addEventListener("load", _ => keys.focus());
-
-body.addEventListener("mouseleave", _ => keys.blur());
-
-body.addEventListener("mouseenter", _ => keys.focus());
-
-document.addEventListener("click", _ => keys.focus());
-
 const userInput = {
-parseInput: function(e) {
-    if (e.type === "mousedown") {
-        if (e.target.id == "k+/-") return; // this is the +/- that will be implemented later
-        userInput["keyId"] = document.querySelector(`#${e.target.id}`);
-    }
-    else {
-        /*for (prop in buttonsArray) { 
-            if (buttonsArray[prop].classList.contains("buttonClick") && buttonsArray[prop].attributes[0].value !== keyPress) buttonsArray[prop].classList.remove("buttonClick");      
-            }*/
-        if (e.key === '"') return;
-        if (document.activeElement === keys && e.keyCode === 8 || e.key === "/") e.preventDefault();
-        if (document.querySelector(`#keysDiv div[data-key="${e.key}"]`)) {
-            userInput["keyId"] = document.querySelector(`#keysDiv div[data-key="${e.key}"]`);
+    parseInput: function(e) {
+        if (e.type === "mousedown") {
+            if (e.target.id == "k+/-") return; // this is the +/- that will be implemented later
+            userInput["keyId"] = document.querySelector(`#${e.target.id}`);
         }
         else {
-            return;
-        }
-    }
-    redirectClick(userInput.keyId);
-    userInput.keyId.classList.add("buttonClick");
-    userInput["keyDownKeyCode"] = e.keyCode;
-    console.log("keyDownKeyCode: ", userInput.keyDownKeyCode);
-    console.log("userInput.keyId: ", userInput.keyId.classList);
-},
-/*
-Fix decimal zeros overpassing display box limit.
-fix digits giung beyond border.
-*/
-restoreClass: function(e) {
-    if (e.type === "mouseup") {
-        if (!("keyId" in userInput) || !userInput.keyId ) {
-            delete userInput.keyId;
-            return;
-        }
-        userInput.keyId.classList.remove("buttonClick");
-        delete userInput.keyId;
-        return;
-    } else {
-        if (e.key === '"') {        // this is the +/-
-            delete userInput.keyId; // button that will
-            return;                 // be implemented
-        }                           // later
-        userInput["releasedKey"] = document.querySelector(`#keysDiv div[data-key="${e.key}"]`);
-        if (userInput.releasedKey) {
-            if  (userInput.releasedKey.classList.contains("buttonClick")) {
-                userInput.releasedKey.classList.remove("buttonClick");
+            if (e.key === '"' || e.metaKey) {
+                return;
+            }
+            if (document.querySelector(`#keysDiv div[data-key="${e.key}"]`)) {
+                e.preventDefault();
+                userInput["keyId"] = document.querySelector(`#keysDiv div[data-key="${e.key}"]`);
             }
             else {
-                if (e.key === "7") {
-                    document.querySelector("#keysDiv div[data-key='/']").classList.remove("buttonClick");
-                } else if (e.key === "+") {
-                    document.querySelector("#keysDiv div[data-key='*']").classList.remove("buttonClick");
-                } 
+                return;
             }
-        } 
-        if (e.keyCode === userInput.keyDownKeyCode) {
-            userInput.keyId.classList.remove("buttonClick");
         }
-        delete userInput.releasedKey;
-        delete userInput.keyId;
-        delete userInput.keyDownKeyCode;
-        return;
-    }
-},
+        redirectClick(userInput.keyId);
+        userInput.keyId.classList.add("buttonClick");
+        userInput["keyDownKeyCode"] = e.keyCode;
+    },
+    restoreClass: function(e) {
+        if (e.type === "mouseup") {
+            if (!("keyId" in userInput) || !userInput.keyId ) {
+                delete userInput.keyId;
+                return;
+            }
+            userInput.keyId.classList.remove("buttonClick");
+            delete userInput.keyId;
+            return;
+        } else {
+            if (e.key === '"') {        // this is the +/-
+                delete userInput.keyId; // button that will
+                delete userInput.keyDownKeyCode;
+                return;                 // be implemented
+            }                           // later
+            if (e.keyCode === userInput.keyDownKeyCode) {
+                userInput.keyId.classList.remove("buttonClick");
+            }
+            else if (document.querySelector(`#keysDiv div[data-key="${e.key}"]`)) {
+                document.querySelector(`#keysDiv div[data-key="${e.key}"]`).classList.remove("buttonClick");
+                if (e.keyCode === 55 || e.keyCode === 171 || e.keyCode === 187) {
+                    document.querySelector(`#keysDiv div[data-key="${((e.keyCode === 55)? '/': '*')}"]`).classList.remove("buttonClick");
+                }
+            }
+            else if (document.querySelector(`#keysDiv div[data-key="${String.fromCharCode(e.keyCode)}"]`)) {
+                document.querySelector(`#keysDiv div[data-key="${String.fromCharCode(e.keyCode)}"]`).classList.remove("buttonClick");
+            }
+            else {
+                return;
+            }
+            delete userInput.keyId;
+            delete userInput.keyDownKeyCode;
+            return;
+        }
+    },
 };
 
 addEventListener("keydown", userInput.parseInput);
 
 addEventListener("keyup", userInput.restoreClass);
-
-const keyPress = addEventListener("keypress", e => e.key);
 
 buttonsArray.forEach(btn => btn.addEventListener("mousedown", userInput.parseInput));
 
@@ -180,17 +162,29 @@ const displayFunctions = {
         if (displayDiv.textContent === "0" || !("currentOperand" in displayFunctions)) { 
             displayDiv.textContent = (key == "kDot")? "0.": `${document.querySelector(`#${key}`).textContent}`;
         }
-        else if (this.currentOperand.toString().length > 13 || key == "kDot" && displayDiv.textContent.indexOf(".") >= 0) {
+        else if (displayDiv.textContent.replace(/,/g, "").length > 11 || key == "kDot" && displayDiv.textContent.indexOf(".") >= 0) {
             return;
         }
         else { 
             this["rawDisplayContent"] = displayDiv.textContent.replace(/,/g, "") + `${document.querySelector(`#${key}`).textContent}`;
-            displayDiv.textContent = this.rawDisplayContent.replace(/(?<!(?<=\.)(\d)*)\d(?=(\d{3})+(?!\d))/g, "$&,");
+            displayDiv.textContent = this.addCommas(this.rawDisplayContent);
             delete this.rawDisplayContent;
         }
         this["currentOperand"] = Number(displayDiv.textContent.replace(/,/g, ""));
         console.log(this.currentOperand);
         console.log(key);
+    },
+    addCommas: function(num) {
+        if (num.indexOf(".") >= 0) {
+            let integer = num.substr(0, num.indexOf("."));
+            integer = integer.replace(/\d(?=(\d{3})+(?!\d))/g, "$&,");
+            let decimal = num.substr(num.indexOf("."));
+            return integer.concat(decimal);
+        }
+        else {
+            num = num.replace(/\d(?=(\d{3})+(?!\d))/g, "$&,");
+            return num;
+        }
     },
 };
 
@@ -207,8 +201,8 @@ const mathOperations = {
                 (operator == "kMultiply")? this.multiply([operand1, operand2]): 
                 this.divide(operand1, operand2);
         }
-        return  (result.toString().length > 14 && typeof(result) === "number" || result.toString().indexOf("e+") >= 0 || result.toString().indexOf("e-") >= 0)? result.toExponential(9):
-                result.toString().replace(/(?<!(?<=\.)(\d)*)\d(?=(\d{3})+(?!\d))/g, "$&,");
+        return  (result.toString().length > 11 && typeof(result) === "number" || result.toString().indexOf("e+") >= 0 || result.toString().indexOf("e-") >= 0)? result.toExponential(6):
+                displayFunctions.addCommas(result.toString());
     },
     add: function(addend, addend2) {
         return (addend + addend2);
@@ -233,13 +227,15 @@ const secondaryOperations = {
     },
     backspace: function() {
         if ("currentOperand" in displayFunctions && !("equalsResult" in onClickFunctions)) {
-            displayDiv.textContent = displayDiv.textContent.slice(0, displayDiv.textContent.length - 1);
+            let modifiedDisplayValue = displayDiv.textContent.replace(/,/g, "");
+            modifiedDisplayValue = modifiedDisplayValue.slice(0, modifiedDisplayValue.length - 1);
+            displayDiv.textContent = displayFunctions.addCommas(modifiedDisplayValue);
             if (displayDiv.textContent === "") {
                 displayDiv.textContent = "0";
                 delete displayFunctions.currentOperand;
             }
             else {
-                displayFunctions.currentOperand = displayDiv.textContent*1;
+                displayFunctions.currentOperand = Number(displayDiv.textContent.replace(/,/g, ""));
             }    
         }
         else return;

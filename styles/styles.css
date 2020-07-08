@@ -13,13 +13,13 @@ body {
 header {
     font-size: 4em;
     text-align: center;
-    margin: 25px;
+    margin: 15px;
 }
 
 #container {
     width: 400px;
     border: #aeb7d5 3px solid;
-    margin: 30px auto;
+    margin: 15px auto;
 }
 
 #displayDiv {
@@ -30,7 +30,7 @@ header {
     width: 400px;
     margin: 0 auto;
     display: flex;
-    justify-content: end;
+    flex-direction: column-reverse;
     align-items: flex-end;
     color: #4a4849;
     border: #aeb7d5 1px solid;
@@ -58,9 +58,9 @@ header {
     background-color: #ccad8283;
 }
 
-#keysDiv:focus {
+/*#keysDiv:focus {
     color: #478383;
-  }
+  }*/
 
 #keysDiv:hover {
     cursor: pointer;
@@ -75,6 +75,10 @@ header {
 
 .buttonClick {
     box-shadow: inset 10px 10px 10px rgba(0,0,0,0.10);
+}
+
+.operatorClick {
+    background-color: #f0d458c2;
 }
 
 .operatorBtn:hover {
