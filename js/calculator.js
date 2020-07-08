@@ -2,7 +2,7 @@ const displayDiv = document.querySelector("#displayDiv");
 const displayStyle = displayDiv.style;
 const allButtons = document.querySelectorAll("#keysDiv div");
 const keys = document.querySelector("#keysDiv");
-const buttonsArray = (allButtons);
+const buttonsArray = Array.from(allButtons);
 const body = document.querySelector("body");
 
 const userInput = {
@@ -107,9 +107,7 @@ const onClickFunctions = {
     },
     operator: function(button) { 
         if (!(button.classList.contains("operatorClick"))) {
-            if ("storedOperation" in onClickFunctions) {
-                document.querySelector(`#${this.storedOperation[1]}`).classList.remove("operatorClick");
-            }
+            clickEffects();
             button.classList.add("operatorClick");
         }  
         if ("storedOperation" in this && "currentOperand" in displayFunctions && !("equalsResult" in this)) {
@@ -140,9 +138,7 @@ const onClickFunctions = {
         console.log(onClickFunctions.storedOperation);
     },
     equals: function() {
-        if ("storedOperation" in onClickFunctions) {
-            document.querySelector(`#${this.storedOperation[1]}`).classList.remove("operatorClick");
-        };  
+        clickEffects();  
         if ("storedOperation" in this && !("equalsResult" in this)) {
             displayDiv.textContent = mathOperations.operate(this.storedOperation[0], 
                 this.storedOperation[1], ("currentOperand" in displayFunctions)? displayFunctions.currentOperand: this.storedOperation[0]);
@@ -181,9 +177,7 @@ const displayFunctions = {
             delete this.rawDisplayContent;
         }
         this["currentOperand"] = Number(displayDiv.textContent.replace(/,/g, ""));
-        if ("storedOperation" in onClickFunctions && document.querySelector(`#${onClickFunctions.storedOperation[1]}`)) {
-            document.querySelector(`#${onClickFunctions.storedOperation[1]}`).classList.remove("operatorClick");
-        };  
+        clickEffects();
     },
     addCommas: function(num) {
         if (num.indexOf(".") >= 0) {
@@ -231,18 +225,13 @@ const mathOperations = {
 
 const secondaryOperations = {
     clear: function() {
+        clickEffects();  
         displayDiv.textContent = "0";
         delete displayFunctions.currentOperand;
         delete onClickFunctions.storedOperation;
         delete onClickFunctions.equalsResult;
-        if ("storedOperation" in onClickFunctions) {
-            document.querySelector(`#${this.storedOperation[1]}`).classList.remove("operatorClick");
-        }    
     },
     backspace: function() {
-        if ("storedOperation" in onClickFunctions) {
-            document.querySelector(`#${this.storedOperation[1]}`).classList.remove("operatorClick");
-        }
         if ("currentOperand" in displayFunctions && !("equalsResult" in onClickFunctions)) {
             let modifiedDisplayValue = displayDiv.textContent.replace(/,/g, "");
             modifiedDisplayValue = modifiedDisplayValue.slice(0, modifiedDisplayValue.length - 1);
@@ -258,3 +247,9 @@ const secondaryOperations = {
         else return;
     },
 };
+
+function clickEffects() {
+    if ("storedOperation" in onClickFunctions) {
+        document.querySelector(`#${onClickFunctions.storedOperation[1]}`).classList.remove("operatorClick");
+    }  
+}
