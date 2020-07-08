@@ -103,3 +103,22 @@ header {
 #kEquals:hover {
     background-color: #75734cde;
 }
+
+@media (max-width: 370px) {
+    #keysDiv {
+        width: 300px;
+        height: 300px;
+    }
+    #container {
+        width: 300px;
+        margin: 15px auto 0px;
+    }
+    #displayDiv {
+        width: 300px;
+ 
+    }
+    header {
+    font-size: 3em;
+    }
+   
+}
