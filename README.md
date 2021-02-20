@@ -52,3 +52,7 @@ Feel free to check the [issues page](https://github.com/StarSheriff2/Calculator/
 ## Show your support
 
 Give a ⭐️ if you like this project!
+
+## 📝 License
+
+This project is [MIT](https://github.com/StarSheriff2/Calculator/blob/master/LICENSE) licensed.
