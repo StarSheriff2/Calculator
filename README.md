@@ -1,12 +1,12 @@
 # JS Calculator
 
-> This is the final project of the Web Development 101 course in Odin Project's Javascript Basics. 
-The calculator will allow you to make basic operations using your mouse, keyboard or touchscreen gestures.
+> This is the final project of the Web Development 101 course in Odin Project's Javascript Basics.
+The calculator will allow you to make basic operations using your mouse, keyboard or touchscreen gestures. 
 
 # Screenshot
 ![screenshot](./app_screenshot.png)
 
-This calculator was built entirely from sractch. I used JS, HTML and CSS to build it. The calculator allows the use of big numbers, and has mouse-click and a keyboard interface.
+I created this app entirely from sractch with JS, HTML and CSS. The calculator allows the use of big numbers, and has mouse-click and a keyboard interface.
 It is possible to do *chain* operations too. So you can do something like, `2 * 5 + 10`, and get `20`.
 
 ## Built With
