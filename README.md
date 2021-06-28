@@ -6,7 +6,7 @@ The calculator will allow you to make basic operations using your mouse, keyboar
 # Screenshot
 ![screenshot](./app_screenshot.png)
 
-I created this app entirely from sractch with JS, HTML and CSS. The calculator allows the use of big numbers, and has mouse-click and a keyboard interface.
+I created this app entirely from sractch with JS, HTML and CSS. The calculator allows the use of big numbers, and has a mouse-click and a keyboard interface.
 It is possible to do *chain* operations too. So you can do something like, `2 * 5 + 10`, and get `20`.
 
 ## Built With
